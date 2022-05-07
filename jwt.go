@@ -51,6 +51,9 @@ func parse(src string) (header, payload, error) {
 	)
 
 	srcArr := strings.Split(src, ".")
+	if len(srcArr) != 3 {
+		return header, payload, fmt.Errorf("invalid token")
+	}
 
 	hJ, err := base64.RawURLEncoding.DecodeString(srcArr[0])
 	if err != nil {
