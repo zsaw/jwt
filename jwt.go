@@ -19,9 +19,9 @@ type header struct {
 
 type payload struct {
 	Issuer         string `json:"iss"`
-	ExpirationTime int64  `json:"exp"`
 	Subject        string `json:"sub"`
 	Audience       string `json:"aud"`
+	ExpirationTime int64  `json:"exp"`
 	NotBefore      int64  `json:"nbf"`
 	IssuedAt       int64  `json:"iat"`
 	JWTID          string `json:"jti"`
@@ -79,7 +79,15 @@ func parse(src string) (header, payload, error) {
 func New(d time.Duration, iss, sub, aud string, secret []byte) string {
 	t := time.Now()
 	header := header{"", "JWT"}
-	payload := payload{iss, t.Add(d).Unix(), sub, aud, t.Unix(), t.Unix(), uuid.NewString()}
+	payload := payload{
+		Issuer:         iss,
+		Subject:        sub,
+		Audience:       aud,
+		ExpirationTime: t.Add(d).Unix(),
+		NotBefore:      t.Unix(),
+		IssuedAt:       t.Unix(),
+		JWTID:          uuid.NewString(),
+	}
 	return signature(header, payload, secret)
 }
 
