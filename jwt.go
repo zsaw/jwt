@@ -92,23 +92,23 @@ func New(d time.Duration, iss, sub, aud string, secret []byte) string {
 }
 
 // Verify signature
-func VerifySignature(src string, secret []byte) error {
+func VerifySignature(src string, secret []byte) (payload, error) {
 	h, p, err := parse(src)
 	if err != nil {
-		return err
+		return p, err
 	}
 
 	if src != signature(h, p, secret) {
-		return fmt.Errorf("invalid signature")
+		return p, fmt.Errorf("invalid signature")
 	}
 
-	return nil
+	return p, nil
 }
 
 // After verifying the signature, a new token is returned
 // The old token can still be used
 func Refresh(src string, d time.Duration, secret []byte) (string, error) {
-	if err := VerifySignature(src, secret); err != nil {
+	if _, err := VerifySignature(src, secret); err != nil {
 		return "", err
 	}
 

@@ -22,7 +22,7 @@ func TestVerifySignature(t *testing.T) {
 	}
 
 	for i := 0; i < len(tokens); i++ {
-		if err := VerifySignature(tokens[i], []byte(SECRET)); err == nil {
+		if _, err := VerifySignature(tokens[i], []byte(SECRET)); err == nil {
 			t.Error(fmt.Errorf("verification signature error"))
 			break
 		}
@@ -36,7 +36,9 @@ func TestRefresh(t *testing.T) {
 		t.Error(err)
 	}
 
-	if err := VerifySignature(newToken, []byte(SECRET)); err != nil {
+	p, err := VerifySignature(newToken, []byte(SECRET))
+	if err != nil {
 		t.Error(err)
 	}
+	fmt.Println(p)
 }
