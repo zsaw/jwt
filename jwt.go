@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -89,6 +90,18 @@ func New(d time.Duration, iss, sub, aud string, secret []byte) string {
 		JWTID:          uuid.NewString(),
 	}
 	return signature(header, payload, secret)
+}
+
+// Verify
+func Verify(src string, secret []byte) (payload, error) {
+	p, err := VerifySignature(src, secret)
+	if err != nil {
+		return p, err
+	}
+	if p.ExpirationTime < time.Now().Unix() {
+		return p, errors.New("invalid token")
+	}
+	return p, nil
 }
 
 // Verify signature
